@@ -4,7 +4,7 @@ A reusable agent skill for scaffolding the [Black Hole Architecture](https://agn
 
 The skill turns one written product vision into a bounded planning and execution environment built from:
 
-- one authoritative Vision;
+- an authoritative Vision file (VISION.md);
 - planner and executor prompt pairs;
 - static, non-overlapping role ownership;
 - committed work orders;
