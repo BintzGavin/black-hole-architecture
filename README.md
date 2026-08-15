@@ -1,6 +1,6 @@
 # Black Hole Architecture
 
-A reusable agent skill for designing, auditing, scaffolding, validating, and repairing repository-native [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture) systems.
+A reusable agent skill for scaffolding the [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture).
 
 The skill turns one written product vision into a bounded planning and execution environment built from:
 
