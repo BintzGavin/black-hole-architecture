@@ -2,9 +2,7 @@
 name: roll-out-black-hole-architecture
 description: >-
   Design, audit, scaffold, validate, and repair repository-native Black Hole
-  Architecture systems. Use when a project needs vision-driven planner and
-  executor roles, non-overlapping file ownership, committed work orders,
-  role-local memory, or reusable Helios-style agent prompt pairs.
+  Architecture systems.
 ---
 
 # Roll Out Black Hole Architecture
