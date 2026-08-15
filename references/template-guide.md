@@ -7,6 +7,7 @@ The bundled Markdown templates are source assets for committed role prompts and 
 - `assets/templates/planner.md`: full vision-driven planner contract.
 - `assets/templates/executor.md`: full plan executor and self-documenter contract.
 - `assets/templates/work-order.md`: exact structure every planner-created work order follows.
+- `assets/templates/backlog.md`: generic authoritative lifecycle ledger rendered independently for every role.
 - `assets/templates/memory.md`: bounded critical-learning store.
 - `assets/templates/status.md`: concise role state and evidence.
 - `assets/templates/role-map.md`: the approved ownership, path, ledger, and cadence contract.
@@ -24,6 +25,7 @@ The bundled Markdown templates are source assets for committed role prompts and 
 
 - `{{VISION_FILE}}`: sole authoritative Vision path.
 - `{{PLAN_DIR}}`: role-local work-order directory.
+- `{{BACKLOG_FILE}}`: independent role-local execution backlog.
 - `{{MEMORY_FILE}}`: role-local critical-learning file.
 - `{{STATUS_FILE}}`: role-local status file.
 - `{{WORK_ORDER_TEMPLATE}}`: shared read-only work-order template.
@@ -51,13 +53,16 @@ List placeholders become Markdown bullets. Empty optional lists become an explic
 1. Preserve the major section order. Agents benefit from a stable operational grammar across roles.
 2. Replace every placeholder with repository evidence. Never leave aspirational commands or paths.
 3. Keep shared contract language identical across roles; put domain knowledge in the dedicated domain sections.
-4. Treat planner and executor prompts as a matched pair with the same paths and responsibility.
+4. Treat planner and executor prompts as a matched pair with the same plan, backlog, memory, status, paths, and responsibility.
 5. Keep the planner implementation-light. Move coding judgment to the executor.
-6. Assign every writable status, progress, context, or memory file to one role.
-7. Use one role-local memory ledger for the planner and executor of that role. Other roles must not write it.
-8. Preserve the cadence block and change its default only when the user specifies another interval or operating window.
-9. Prefer direct paths over repeating large guidance in a parent instruction.
-10. Validate manually after every prompt edit.
+6. Render `assets/templates/backlog.md` once per role. Each independent backlog is authoritative only for that role and must not be written by peers.
+7. Keep lifecycle state out of work-order headers so the backlog remains the single authority.
+8. Preserve recoverable `blocked` and `needs_input` states. Only `completed` and explicit `cancelled` are terminal.
+9. Assign every writable status, progress, context, backlog, or memory file to one role.
+10. Use one role-local memory ledger for the planner and executor of that role. Other roles must not write it.
+11. Preserve the cadence block and change its default only when the user specifies another interval or operating window.
+12. Prefer direct paths over repeating large guidance in a parent instruction.
+13. Validate manually after every prompt edit.
 
 ## Manual reuse
 

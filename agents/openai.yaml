@@ -1,4 +1,4 @@
 interface:
   display_name: "Roll Out Black Hole Architecture"
-  short_description: "Scaffold continuous planner and executor roles"
-  default_prompt: "Use $roll-out-black-hole-architecture to set up this repository with one Vision, disjoint roles, role-local ledgers, and an hourly alternating planner/executor cadence."
+  short_description: "Scaffold roles with independent backlogs"
+  default_prompt: "Use $roll-out-black-hole-architecture to set up this repository with one Vision, disjoint roles, independent role backlogs, recoverable input states, role-local memory, and an hourly alternating planner/executor cadence."

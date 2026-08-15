@@ -25,9 +25,11 @@ Continue the pattern across every hour of the operating window.
 
 ## Eligibility
 
-A planner is eligible when its role has no ready or in-progress work order and no prior invocation still running. It creates at most one work order. If the role has no eligible Vision gap, the planner completes as a successful no-op.
+A planner is eligible when its role has no nonterminal backlog work and no prior invocation still running. It creates at most one work order and backlog entry in the same repository change. If the role has no eligible Vision gap, the planner completes as a successful no-op.
 
-An executor is eligible when its role has one ready work order and no prior invocation still running. It consumes at most one work order. If no eligible work order exists, the executor completes as a successful no-op.
+A planner may also run a recovery review when its backlog contains `blocked` or `needs_input` work and new durable resolution evidence exists. It resolves that entry, returns it to `ready`, or explicitly replaces it. It does not plan unrelated work during recovery.
+
+An executor is eligible when its independent role backlog has one `ready` entry and no prior invocation still running. It consumes at most one work order. It must persist the claim before product changes. If no eligible work exists, the executor completes as a successful no-op.
 
 ## Parallelism and isolation
 
@@ -35,7 +37,8 @@ Run different roles in parallel because their write ownership is disjoint. Same-
 
 Each planner and executor starts from current repository state and reads the same role-local ledger:
 
-- `.sys/plans/<role>/` for work orders and their state;
+- `.sys/plans/<role>/` for immutable task payloads and appended result evidence;
+- `.sys/backlogs/<role>.md` for the authoritative execution lifecycle;
 - `.sys/memory/<role>.md` for critical learnings shared across that role's runs;
 - `docs/status/<ROLE>.md` for concise role progress and blocked evidence.
 
@@ -43,12 +46,14 @@ Other roles must not write these files. Express cross-role needs as dependencies
 
 ## Missed and failed ticks
 
-- A failed planning run leaves no ready work order, so the next executor run stops safely.
-- A missed execution wave leaves its ready work order eligible for the next execution wave.
-- A planner never creates another work order while ready or in-progress work exists for its role.
-- A blocked executor records evidence in its role-local work order and status before stopping when it can do so safely.
+- A failed planning run leaves no `ready` backlog entry, so the next executor run stops safely.
+- A missed execution wave leaves its `ready` backlog entry eligible for the next execution wave.
+- A planner never creates another work order while nonterminal backlog work exists for its role.
+- A permission-sensitive run asks first when possible or moves to recoverable `needs_input` with the exact question preserved.
+- A blocked executor records recovery evidence in its role-local backlog, work-order Result, and status before pausing.
+- `blocked` and `needs_input` may return to `ready` after durable resolution; only `completed` and explicit `cancelled` are terminal.
 - Restart the alternating sequence from durable role state after an interruption. Do not infer completion from elapsed time.
 
 ## What the scaffold records
 
-Record the operating window, tick interval, phase order, phase anchor, per-role overlap rule, and missed-run policy in `.sys/black-hole/role-map.md`. Describe the cadence contract without generating launch configuration. The user can choose the launch mechanism separately.
+Record the operating window, tick interval, phase order, phase anchor, per-role overlap rule, missed-run policy, and recovery policy in `.sys/black-hole/role-map.md`. Describe the cadence contract without generating launch configuration. The user can choose the launch mechanism separately.

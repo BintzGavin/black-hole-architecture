@@ -16,16 +16,19 @@ This is the sole definition of the desired state. Each role's planner and execut
 - **Per-role recurrence**: two-hour planner and executor streams offset by one hour
 - **Overlap policy**: same-role overlap is prohibited; unrelated roles continue independently
 - **No-work policy**: a role with no eligible planning or execution work completes as a successful no-op
-- **Missed-run policy**: preserve the phase order for that role; never stack a new plan over ready or in-progress work
+- **Missed-run policy**: preserve the phase order for that role; never stack a new plan over a nonterminal backlog entry
+- **Recovery policy**: preserve `blocked` and `needs_input` work for dependency resolution or manual intervention; only `completed` and explicit `cancelled` are terminal
 
 ## Global invariants
 
 - Planning and execution remain separate responsibilities.
-- Every role has one plan namespace, one memory file, one status file, and one planner/executor prompt pair.
+- Every role has one plan namespace, one authoritative execution backlog, one memory file, one status file, and one planner/executor prompt pair.
+- Each backlog is role-local, shared only by that role's planner and executor, and owns lifecycle state; other roles must not write it.
 - Each memory file is a role-local memory ledger shared only by that role's planner and executor across runs; other roles must not write it.
 - Product write ownership is disjoint across roles.
 - Shared writable files have exactly one owner.
 - Cross-role needs are recorded as dependencies.
+- Permission-sensitive work remains recoverable through a durable `needs_input` state.
 - Missing eligible work produces no repository changes.
 
 ## Roles
@@ -46,6 +49,8 @@ Replace `ROLE_SECTIONS` with one copy of this block per role:
 - **Read-only paths**:
   - `[Dependency or evidence path]`
 - **Plan namespace**: `.sys/plans/[role-id]/`
+- **Execution backlog**: `.sys/backlogs/[role-id].md`
+- **Backlog users**: this role's planner and executor only
 - **Memory**: `.sys/memory/[role-id].md`
 - **Ledger users**: this role's planner and executor only
 - **Status**: `docs/status/[ROLE-ID].md`

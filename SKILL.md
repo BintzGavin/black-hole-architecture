@@ -2,8 +2,8 @@
 name: roll-out-black-hole-architecture
 description: >-
   Design, audit, scaffold, validate, and repair repository-native Black Hole
-  Architecture systems with disjoint roles, role-local ledgers, and a
-  continuous alternating planner/executor cadence.
+  Architecture systems with disjoint roles, independent role backlogs,
+  role-local memory, and a continuous alternating planner/executor cadence.
 ---
 
 # Roll Out Black Hole Architecture
@@ -34,7 +34,7 @@ These are concrete reference implementations, not copy-ready generic prompts. Pr
 
 ## 1. Inspect the repository
 
-Read repository instructions, primary product documentation, workspace/package structure, tests, current prompt files, work orders, status, and durable memory. Use history only when it clarifies ownership or recurring failures.
+Read repository instructions, primary product documentation, workspace/package structure, tests, current prompt files, work orders, role backlogs, status, and durable memory. Use history only when it clarifies ownership or recurring failures.
 
 Identify:
 
@@ -52,7 +52,7 @@ For a broad repository, use read-only scouts when subagents are available:
 - one scout maps Vision and governance;
 - one or more scouts map independent package/domain ownership;
 - one scout maps tests and verification commands;
-- one scout maps existing prompts, plans, memory, and status.
+- one scout maps existing prompts, plans, backlogs, memory, and status.
 
 Every scout must not edit, create setup files, or choose the final architecture. Give each scout a bounded path or concern. The parent agent must synthesize their evidence, resolve contradictions, validate non-overlap, and own the final gravity map.
 
@@ -68,11 +68,11 @@ Copy [assets/templates/role-map.md](assets/templates/role-map.md) into a draft a
 - read-only paths and dependencies;
 - Reality paths;
 - verification commands;
-- plan, memory, status, and prompt paths.
+- plan, backlog, memory, status, and prompt paths.
 
 Reject roles that are merely topics. A valid role is a static write boundary. Treat path equality and directory-prefix containment as overlap. If two plausible maps produce different ownership, ask the user to choose after showing the conflict.
 
-Treat `.sys/memory/<role>.md` as the role-local memory ledger shared by that role's planner and executor across runs. Other roles must not write it. Keep plans and status role-local as well. Cross-role needs become work-order dependencies for the owning role.
+Treat `.sys/backlogs/<role>.md` as the role's authoritative execution ledger. It is independently rendered from the generic backlog template and shared only by that role's planner and executor. Other roles must not write it. Treat `.sys/memory/<role>.md` as the role-local memory ledger under the same ownership rule. Keep plans and status role-local as well. Cross-role needs become work-order dependencies for the owning role.
 
 Do not create repository files until the parent agent has locked a map with zero write overlap.
 
@@ -88,7 +88,7 @@ Use the contract in [references/cadence.md](references/cadence.md). Unless the u
 - prohibit same-role overlap while allowing unrelated roles to continue;
 - let planners and executors stop successfully when their role has no eligible work.
 
-A planner must not stack another work order while its role already has ready or in-progress work. Record the interval, phase order, operating window, overlap rule, and missed-run behavior in `.sys/black-hole/role-map.md`. Keep launch configuration outside the scaffold unless the user separately requests it.
+A planner must not stack another work order while its role already has nonterminal backlog work. Record the interval, phase order, operating window, overlap rule, recovery policy, and missed-run behavior in `.sys/black-hole/role-map.md`. Keep launch configuration outside the scaffold unless the user separately requests it.
 
 ## 4. Scaffold the Markdown files
 
@@ -98,6 +98,7 @@ Create these paths:
 .sys/black-hole/role-map.md
 .sys/black-hole/work-order-template.md
 .sys/plans/<role>/
+.sys/backlogs/<role>.md
 .sys/memory/<role>.md
 docs/prompts/planning-<role>.md
 docs/prompts/execution-<role>.md
@@ -110,9 +111,10 @@ Copy and resolve:
 2. `assets/templates/work-order.md` → `.sys/black-hole/work-order-template.md`
 3. For each role, `assets/templates/planner.md` → `docs/prompts/planning-<role>.md`
 4. For each role, `assets/templates/executor.md` → `docs/prompts/execution-<role>.md`
-5. For each role, `assets/templates/memory.md` → `.sys/memory/<role>.md`
-6. For each role, `assets/templates/status.md` → `docs/status/<ROLE>.md`
-7. Create the role's empty `.sys/plans/<role>/` namespace for future work orders.
+5. For each role, `assets/templates/backlog.md` → `.sys/backlogs/<role>.md`
+6. For each role, `assets/templates/memory.md` → `.sys/memory/<role>.md`
+7. For each role, `assets/templates/status.md` → `docs/status/<ROLE>.md`
+8. Create the role's empty `.sys/plans/<role>/` namespace for future work orders.
 
 Replace every `{{PLACEHOLDER}}` with repository evidence. Render empty optional lists as `- None declared.` rather than deleting sections. Preserve the major section order in planner and executor prompts.
 
@@ -120,10 +122,11 @@ Replace every `{{PLACEHOLDER}}` with repository evidence. Render empty optional 
 
 After the parent agent locks `.sys/black-hole/role-map.md`, it may assign one role builder per disjoint role.
 
-Each role builder receives the approved role-map section and the five source templates it needs. Role builders may create only their disjoint role-local files:
+Each role builder receives the approved role-map section and the six source templates it needs. Role builders may create only their disjoint role-local files:
 
 - their planner prompt;
 - their executor prompt;
+- their independent execution backlog;
 - their memory file;
 - their status file;
 - their plan directory.
@@ -134,12 +137,14 @@ Role builders must not edit shared files, another role's files, product code, or
 
 Confirm:
 
-- The planner reads Vision, Reality, existing plans, memory, and status; chooses one gap; writes one work order; and never changes product files.
-- The executor locates one eligible work order; never invents scope; edits only owned paths; verifies success; and updates only role-local state.
-- Both prompts name the same Vision, plan, memory, status, and ownership paths.
+- The planner reads Vision, Reality, existing plans, backlog, memory, and status; chooses one gap; writes one work order and one backlog entry in the same repository change; and never changes product files.
+- The executor claims one eligible backlog entry before product edits; never invents scope; edits only owned paths; verifies success; and updates only role-local state.
+- Both prompts name the same Vision, plan, backlog, memory, status, and ownership paths.
 - Cross-role needs become dependencies, not unauthorized edits.
 - Memory accepts only critical reusable learnings, never routine activity.
 - The planner and executor share only their role-local memory ledger; other roles never write it.
+- The generic backlog template is rendered once per role; that independent file is the authoritative lifecycle ledger for only that role.
+- Permission-sensitive work asks first when possible or persists an exact `needs_input` question for manual intervention.
 - Domain detail extends the common contract without weakening it.
 
 ## 6. Validate manually
@@ -150,15 +155,17 @@ Treat any failed check as an invalid architecture:
 2. Every prompt names the one approved Vision.
 3. No two roles own the same path or ancestor/descendant paths.
 4. Every shared writable file has exactly one owner.
-5. Planner output is limited to its plan namespace.
-6. Executor writes are limited to its work order, owned product paths, memory, and status.
+5. Planner output is limited to its plan namespace and its independent role backlog.
+6. Executor writes are limited to its backlog claim, work-order Result, owned product paths, memory, and status.
 7. The work-order template contains context, exact files, implementation constraints, tests, non-goals, and dependencies.
 8. Every verification command is real for this repository.
 9. Every Reality and read-only path exists or is explicitly expected to be created by the Vision.
-10. Planner and executor prompts agree on how plans become `ready`, `completed`, or `blocked`.
+10. Planner and executor prompts agree that the role backlog is authoritative for `ready`, `in_progress`, `needs_input`, `blocked`, `completed`, and `cancelled` state.
 11. A planner with no eligible gap and an executor with no eligible work both stop without changes.
 12. The role map records continuous operation, the tick interval, alternating phase order, and same-role overlap policy.
-13. Every role has its own memory ledger, and no shared backlog, progress, or system-context file has multiple writers.
+13. Every role has its own backlog and memory ledger, and no global backlog, progress, or system-context file has multiple writers.
+14. Executors persist `in_progress` claims before product changes.
+15. `blocked` and `needs_input` remain recoverable; only `completed` and explicit `cancelled` are terminal.
 
 Search the copied files directly for placeholder delimiters and compare the final role map against every prompt. Do not rely on self-report from role builders.
 
@@ -174,8 +181,10 @@ Audit in this order:
 6. missing verification evidence;
 7. routine logs polluting critical memory;
 8. prompts that cannot safely no-op;
-9. cadence drift, same-role overlap, or stacked ready plans;
-10. shared ledgers written by multiple roles.
+9. cadence drift, same-role overlap, or stacked `ready` backlog entries;
+10. shared ledgers written by multiple roles;
+11. backlog state duplicated inside work orders;
+12. permission questions converted into terminal blocked results.
 
 Repair the smallest structural cause. Do not paper over shared ownership with coordination prose.
 
@@ -186,6 +195,7 @@ State:
 - the selected Vision;
 - the final role/ownership map;
 - the continuous cadence contract;
+- the independent role backlog and recovery contract;
 - Markdown files created or repaired;
 - validation results;
 - any unresolved cross-role dependency or human decision.

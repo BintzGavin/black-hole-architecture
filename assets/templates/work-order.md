@@ -1,7 +1,9 @@
 # [ROLE-ID-NNN] — [Bounded task title]
 
 **Role**: `[role-id]`
-**Status**: `ready`
+**Backlog entry**: `.sys/backlogs/[role-id].md#[ROLE-ID-NNN]`
+
+The role-local backlog owns lifecycle state. The planner freezes Sections 1–6 when the entry becomes `ready`. While an entry is `needs_input`, the planner may revise those sections only to apply its recorded resolution. The executor may append only the Result section.
 
 ## 1. Context & Goal
 
@@ -43,3 +45,7 @@ Do not include production code. Leave implementation judgment to the executor.
 - **Required first**: [Satisfied dependencies, or “None”.]
 - **Cross-role needs**: [Dependencies for another planner, or “None”.]
 - **Blocked when**: [Conditions that require a blocked result instead of broader edits.]
+
+## 7. Result
+
+Unfilled by the planner. The executor appends completion, blocked, or `needs_input` evidence here after claiming the work order through the role-local backlog.

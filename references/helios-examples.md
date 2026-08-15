@@ -19,11 +19,14 @@ The four files preserve the production-scale detail of `docs/prompts/` from Heli
 The adaptations are intentional:
 
 - Plans live in a role-local namespace such as `.sys/plans/core/`.
+- Every role receives an independent execution backlog such as `.sys/backlogs/core.md`, rendered from the generic backlog template.
+- The role backlog is authoritative for lifecycle state and shared only by that role's planner and executor.
 - Each role has one memory ledger such as `.sys/memory/core.md`, shared only by that role's planner and executor.
 - Status and optional generated context remain role-local.
 - Cross-role needs become explicit blocked dependencies. The role never edits another role's state on its behalf.
-- Shared backlog, progress-ledger, and system-context writes have been removed.
-- Interactive permission questions have been replaced with deterministic blocked behavior.
+- Global backlog, progress-ledger, and system-context writes have been removed.
+- Permission questions ask first when possible and fall back to durable, recoverable `needs_input` state when unattended.
+- `blocked` remains recoverable; only `completed` and explicit `cancelled` close an entry.
 - Work-order identifiers are stable sequence-based names rather than dates.
 
 ## How to use them
