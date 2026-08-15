@@ -1,5 +1,5 @@
 ```sh
-npx skills add BintzGavin/black-hole-architecture -y
+npx skills add BintzGavin/black-hole-architecture
 ```
 
 The [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture) is a cron-first self-driving agent flow
