@@ -4,7 +4,7 @@ The [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture) is 
 
 Its crons and markdown
 
-The simplest form of this would be an agent that wakes up every x hours, compares the current codebase with the vision of the project and makes and executes a plan to close the gap. 
+The simplest form of this would be an agent that wakes up every x hours, compares the current codebase with the vision.md of the project and makes and executes a plan to close the gap. 
 
 Now instead of 1 agent, figure out how to cleanly make 10 agents do that in parallel every hour. Or 100. Or.. you see where this is going
 
