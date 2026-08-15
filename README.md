@@ -8,7 +8,7 @@ The simplest form of this would be an agent that wakes up every x hours, compare
 
 Now instead of 1 agent, figure out how to cleanly make 10 agents do that in parallel every hour. Or 100. Or.. you see where this is going
 
-The approach here in this skill is a pretty opinionated way to scale the above. 
+The approach here in this skill is a pretty opinionated way to try and do that. 
 
 Every agent gets a persistent identity and owns a slice of the codebase. No agent is allowed to touch anyy of another role’s code. Sounds crazy but it keeps changes small
 
