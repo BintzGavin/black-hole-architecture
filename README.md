@@ -18,6 +18,9 @@ It is intentionally implementation-agnostic. The repository contains Markdown in
 - [`SKILL.md`](SKILL.md) — operating instructions for auditing, scaffolding, and repairing the architecture.
 - [`references/architecture.md`](references/architecture.md) — invariants and design model.
 - [`references/template-guide.md`](references/template-guide.md) — template adaptation guidance.
+- [`references/helios-examples.md`](references/helios-examples.md) — guide to two complete real-world role pairs.
+- [`references/helios-planning-core.md`](references/helios-planning-core.md) and [`references/helios-execution-core.md`](references/helios-execution-core.md) — unabridged Helios Core prompts.
+- [`references/helios-planning-studio.md`](references/helios-planning-studio.md) and [`references/helios-execution-studio.md`](references/helios-execution-studio.md) — unabridged Helios Studio prompts.
 - [`assets/templates/planner.md`](assets/templates/planner.md) — canonical planner prompt.
 - [`assets/templates/executor.md`](assets/templates/executor.md) — canonical executor prompt.
 - [`assets/templates/work-order.md`](assets/templates/work-order.md) — bounded implementation contract.

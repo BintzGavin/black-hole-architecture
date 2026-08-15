@@ -22,6 +22,17 @@ Read [references/architecture.md](references/architecture.md) before defining ro
 
 Do not turn an audit or explanation request into repository writes.
 
+## Use the full reference implementations
+
+Use the generic templates for scaffolding. When the task calls for production-scale prompt detail, read [references/helios-examples.md](references/helios-examples.md) and compare the relevant complete Helios role pair:
+
+- [references/helios-planning-core.md](references/helios-planning-core.md)
+- [references/helios-execution-core.md](references/helios-execution-core.md)
+- [references/helios-planning-studio.md](references/helios-planning-studio.md)
+- [references/helios-execution-studio.md](references/helios-execution-studio.md)
+
+These are concrete reference implementations, not copy-ready generic prompts. Preserve their depth and operating shape while replacing Helios-specific paths, commands, ownership, features, and state conventions with repository evidence.
+
 ## 1. Inspect the repository
 
 Read repository instructions, primary product documentation, workspace/package structure, tests, current prompt files, work orders, status, and durable memory. Use history only when it clarifies ownership or recurring failures.
