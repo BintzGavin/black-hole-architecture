@@ -4,13 +4,13 @@ npx skills add BintzGavin/black-hole-architecture
 
 The [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture) is a cron-first self-driving agent flow
 
-Its crons and markdown
+It's crons and markdown
 
 The simplest form of this would be an agent that wakes up every x hours, compares the current codebase with the vision.md of the project and makes and executes a plan to close the gap. 
 
 Now instead of 1 agent, figure out how to cleanly make 10 agents do that in parallel every hour. Or 100. Or.. you see where this is going
 
-The approach here in this skill is a pretty opinionated way to try and do that. 
+The approach here in this skill is a pretty opinionated way to try and do that
 
 Every agent gets a persistent identity and owns a slice of the codebase. No agent is allowed to touch anyy of another role’s code. Sounds crazy but it keeps changes small
 
@@ -20,6 +20,6 @@ Plans and learnings are committed to the repo
 
 Ideally you should run this using a cloud harness but local works too
 
-Thats basically it, have fun
+That's basically it, have fun
 
 
