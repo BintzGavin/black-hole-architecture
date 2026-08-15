@@ -1,38 +1,23 @@
 # Black Hole Architecture
 
-A reusable agent skill for scaffolding the [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture).
+The [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture) is a cron-first self-driving agent flow
 
-The skill turns one written product vision into a bounded planning and execution environment built from:
+Its crons and markdown, thats basically it
 
-- an authoritative Vision file (VISION.md);
-- planner and executor prompt pairs;
-- static, non-overlapping role ownership;
-- committed work orders;
-- role-local memory and status;
-- explicit verification and safe idle behavior.
+The simplest form would be an agent that wakes up every x hours, compares the current codebase with the vision of the project (a VISION.md file) and makes and executes a plan to close the gap. 
 
-It is intentionally implementation-agnostic. The repository contains Markdown instructions and prompt templates, plus the minimal skill interface metadata.
+Now instead of 1 agent, figure out how to cleanly make 10 agents do that in parallel every hour. Or 100. Or.. you see where this is going
 
-## Contents
+The approach here in this skill is a pretty opinionated way to scale the above. 
 
-- [`SKILL.md`](SKILL.md) — operating instructions for auditing, scaffolding, and repairing the architecture.
-- [`references/architecture.md`](references/architecture.md) — invariants and design model.
-- [`references/template-guide.md`](references/template-guide.md) — template adaptation guidance.
-- [`references/helios-examples.md`](references/helios-examples.md) — guide to two complete real-world role pairs.
-- [`references/helios-planning-core.md`](references/helios-planning-core.md) and [`references/helios-execution-core.md`](references/helios-execution-core.md) — unabridged Helios Core prompts.
-- [`references/helios-planning-studio.md`](references/helios-planning-studio.md) and [`references/helios-execution-studio.md`](references/helios-execution-studio.md) — unabridged Helios Studio prompts.
-- [`assets/templates/planner.md`](assets/templates/planner.md) — canonical planner prompt.
-- [`assets/templates/executor.md`](assets/templates/executor.md) — canonical executor prompt.
-- [`assets/templates/work-order.md`](assets/templates/work-order.md) — bounded implementation contract.
-- [`assets/templates/role-map.md`](assets/templates/role-map.md) — global ownership map.
-- [`assets/templates/memory.md`](assets/templates/memory.md) and [`assets/templates/status.md`](assets/templates/status.md) — role-local durable state.
+Every agent gets a persistent identity and owns a slice of the codebase. No agent is allowed to touch anyy of another role’s code. Sounds crazy but it keeps changes small
 
-## Core rule
+At hour 0 every role runs makes a plan. At hour 1 they execute the plan. Then at hour 2 they start planning again and the cycle repeats
 
-Planners may write only work orders. Executors may implement only eligible work orders and only inside their declared ownership boundaries. Shared writable surfaces must have exactly one owner.
+Plans and learnings are committed to the repo
 
-Start with the operation selector in [`SKILL.md`](SKILL.md). For a new repository, use **Scaffold**; for an existing system, begin with **Audit**.
+Ideally you should run this using a cloud harness but local works too
 
-## Source
+Thats basically it, have fun
 
-The architecture and prompt structure are based on the full agent-oriented edition of [Black Hole Architecture](https://agnt.one/blog/black-hole-architecture), refined against the working Helios prompt system.
+
