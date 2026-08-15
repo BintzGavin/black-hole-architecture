@@ -31,6 +31,7 @@ Find the most important eligible gap between the authoritative Vision and curren
 - A required dependency is missing or unresolved.
 - The evidence is insufficient to define a safe, testable work order.
 - Existing work already covers the selected gap.
+- A ready or in-progress work order already exists for this role.
 
 When blocked, do not create speculative work. Leave repository state unchanged.
 

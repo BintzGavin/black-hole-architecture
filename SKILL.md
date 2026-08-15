@@ -2,14 +2,15 @@
 name: roll-out-black-hole-architecture
 description: >-
   Design, audit, scaffold, validate, and repair repository-native Black Hole
-  Architecture systems.
+  Architecture systems with disjoint roles, role-local ledgers, and a
+  continuous alternating planner/executor cadence.
 ---
 
 # Roll Out Black Hole Architecture
 
 Create a repository environment where stateless roles converge on one written Vision through strict planner/executor separation and disjoint write ownership.
 
-Read [references/architecture.md](references/architecture.md) before defining roles. Read [references/template-guide.md](references/template-guide.md) before copying templates.
+Read [references/architecture.md](references/architecture.md) before defining roles. Read [references/cadence.md](references/cadence.md) before defining recurring operation. Read [references/template-guide.md](references/template-guide.md) before copying templates.
 
 ## Select the operation
 
@@ -71,9 +72,25 @@ Copy [assets/templates/role-map.md](assets/templates/role-map.md) into a draft a
 
 Reject roles that are merely topics. A valid role is a static write boundary. Treat path equality and directory-prefix containment as overlap. If two plausible maps produce different ownership, ask the user to choose after showing the conflict.
 
+Treat `.sys/memory/<role>.md` as the role-local memory ledger shared by that role's planner and executor across runs. Other roles must not write it. Keep plans and status role-local as well. Cross-role needs become work-order dependencies for the owning role.
+
 Do not create repository files until the parent agent has locked a map with zero write overlap.
 
-## 3. Scaffold the Markdown files
+## 3. Define the continuous cadence
+
+Use the contract in [references/cadence.md](references/cadence.md). Unless the user specifies another cadence, record this default in the role map:
+
+- operate continuously, 24/7;
+- use a one-hour system tick;
+- run all eligible role planners in parallel during one planning wave;
+- run all matching role executors one hour later during the execution wave;
+- repeat the two waves, which gives each role a two-hour planner stream and a two-hour executor stream offset by one hour;
+- prohibit same-role overlap while allowing unrelated roles to continue;
+- let planners and executors stop successfully when their role has no eligible work.
+
+A planner must not stack another work order while its role already has ready or in-progress work. Record the interval, phase order, operating window, overlap rule, and missed-run behavior in `.sys/black-hole/role-map.md`. Keep launch configuration outside the scaffold unless the user separately requests it.
+
+## 4. Scaffold the Markdown files
 
 Create these paths:
 
@@ -113,7 +130,7 @@ Each role builder receives the approved role-map section and the five source tem
 
 Role builders must not edit shared files, another role's files, product code, or the approved ownership map. The parent agent creates the two shared files, checks all builder outputs, and resolves global consistency.
 
-## 4. Review each prompt pair
+## 5. Review each prompt pair
 
 Confirm:
 
@@ -122,9 +139,10 @@ Confirm:
 - Both prompts name the same Vision, plan, memory, status, and ownership paths.
 - Cross-role needs become dependencies, not unauthorized edits.
 - Memory accepts only critical reusable learnings, never routine activity.
+- The planner and executor share only their role-local memory ledger; other roles never write it.
 - Domain detail extends the common contract without weakening it.
 
-## 5. Validate manually
+## 6. Validate manually
 
 Treat any failed check as an invalid architecture:
 
@@ -139,10 +157,12 @@ Treat any failed check as an invalid architecture:
 9. Every Reality and read-only path exists or is explicitly expected to be created by the Vision.
 10. Planner and executor prompts agree on how plans become `ready`, `completed`, or `blocked`.
 11. A planner with no eligible gap and an executor with no eligible work both stop without changes.
+12. The role map records continuous operation, the tick interval, alternating phase order, and same-role overlap policy.
+13. Every role has its own memory ledger, and no shared backlog, progress, or system-context file has multiple writers.
 
 Search the copied files directly for placeholder delimiters and compare the final role map against every prompt. Do not rely on self-report from role builders.
 
-## 6. Repair an existing setup
+## 7. Repair an existing setup
 
 Audit in this order:
 
@@ -153,16 +173,19 @@ Audit in this order:
 5. vague or oversized work orders;
 6. missing verification evidence;
 7. routine logs polluting critical memory;
-8. prompts that cannot safely no-op.
+8. prompts that cannot safely no-op;
+9. cadence drift, same-role overlap, or stacked ready plans;
+10. shared ledgers written by multiple roles.
 
 Repair the smallest structural cause. Do not paper over shared ownership with coordination prose.
 
-## 7. Report
+## 8. Report
 
 State:
 
 - the selected Vision;
 - the final role/ownership map;
+- the continuous cadence contract;
 - Markdown files created or repaired;
 - validation results;
 - any unresolved cross-role dependency or human decision.

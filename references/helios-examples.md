@@ -1,28 +1,38 @@
 # Full Helios Prompt Examples
 
-These are concrete reference implementations from the Helios repository, not generic templates. They show the amount of domain context, file ownership, feature inventory, verification guidance, memory policy, and completion protocol a mature Black Hole Architecture role can carry.
+These are concrete reference implementations adapted from the Helios repository, not generic templates. They show the amount of domain context, file ownership, feature inventory, verification guidance, memory policy, and completion protocol a mature Black Hole Architecture role can carry.
 
 ## Included role pairs
 
 ### Core
 
-- [Planner](helios-planning-core.md) — 168 lines
-- [Executor](helios-execution-core.md) — 281 lines
+- [Planner](helios-planning-core.md)
+- [Executor](helios-execution-core.md)
 
 ### Studio
 
-- [Planner](helios-planning-studio.md) — 179 lines
-- [Executor](helios-execution-studio.md) — 293 lines
+- [Planner](helios-planning-studio.md)
+- [Executor](helios-execution-studio.md)
 
-The four files are unabridged snapshots of `docs/prompts/` from Helios commit [`0045419d`](https://github.com/BintzGavin/helios/tree/0045419d5020e3f3ecd5b9f320c6c38549169959/docs/prompts).
+The four files preserve the production-scale detail of `docs/prompts/` from Helios commit [`0045419d`](https://github.com/BintzGavin/helios/tree/0045419d5020e3f3ecd5b9f320c6c38549169959/docs/prompts), with the state and boundary rules adapted to the reusable architecture in this skill.
+
+The adaptations are intentional:
+
+- Plans live in a role-local namespace such as `.sys/plans/core/`.
+- Each role has one memory ledger such as `.sys/memory/core.md`, shared only by that role's planner and executor.
+- Status and optional generated context remain role-local.
+- Cross-role needs become explicit blocked dependencies. The role never edits another role's state on its behalf.
+- Shared backlog, progress-ledger, and system-context writes have been removed.
+- Interactive permission questions have been replaced with deterministic blocked behavior.
+- Work-order identifiers are stable sequence-based names rather than dates.
 
 ## How to use them
 
 1. Read one complete planner/executor pair after the repository's gravity map is locked.
 2. Compare its level of domain specificity with the generic [planner](../assets/templates/planner.md) and [executor](../assets/templates/executor.md) templates.
 3. Reproduce the depth that is justified by repository evidence: concrete feature gaps, exact paths, real commands, known dependencies, and domain-specific failure modes.
-4. Replace all Helios-specific assumptions. Do not inherit its package names, ownership boundaries, commands, product backlog, journal conventions, or shared-file practices.
-5. Reapply the invariants in [architecture.md](architecture.md). The examples demonstrate prompt completeness; the generic architecture contract remains authoritative where an older example differs.
+4. Replace all Helios-specific assumptions. Do not inherit its package names, ownership boundaries, commands, or product details.
+5. Reapply the invariants in [architecture.md](architecture.md). The examples demonstrate prompt completeness; the generic architecture contract remains authoritative.
 
 ## What to study
 

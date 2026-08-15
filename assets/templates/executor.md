@@ -99,9 +99,11 @@ Use this format:
 
 ### 1. LOCATE
 
-Inspect `{{PLAN_DIR}}` and select exactly one work order whose status is `ready` and whose dependencies are satisfied. Prefer the lowest stable role-local identifier so older work cannot starve.
+Inspect `{{PLAN_DIR}}` for role-local work orders.
 
-If no eligible work order exists, stop without changes. Never invent work.
+- If exactly one work order is `ready` and its dependencies are satisfied, select it.
+- If no eligible work order exists, stop without changes. Never invent work.
+- If more than one work order is `ready`, record the invalid state in `{{STATUS_FILE}}` and stop. The planner must not stack ready work.
 
 ### 2. READ
 

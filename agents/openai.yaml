@@ -1,4 +1,4 @@
 interface:
   display_name: "Roll Out Black Hole Architecture"
-  short_description: "Scaffold vision-driven planner and executor roles"
-  default_prompt: "Set up Black Hole Architecture in this repository with a single Vision, disjoint roles, and committed planner/executor prompt pairs."
+  short_description: "Scaffold continuous planner and executor roles"
+  default_prompt: "Use $roll-out-black-hole-architecture to set up this repository with one Vision, disjoint roles, role-local ledgers, and an hourly alternating planner/executor cadence."

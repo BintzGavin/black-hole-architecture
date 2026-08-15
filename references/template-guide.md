@@ -9,7 +9,7 @@ The bundled Markdown templates are source assets for committed role prompts and 
 - `assets/templates/work-order.md`: exact structure every planner-created work order follows.
 - `assets/templates/memory.md`: bounded critical-learning store.
 - `assets/templates/status.md`: concise role state and evidence.
-- `assets/templates/role-map.md`: the approved global ownership and path contract.
+- `assets/templates/role-map.md`: the approved ownership, path, ledger, and cadence contract.
 
 ## Placeholder groups
 
@@ -54,8 +54,10 @@ List placeholders become Markdown bullets. Empty optional lists become an explic
 4. Treat planner and executor prompts as a matched pair with the same paths and responsibility.
 5. Keep the planner implementation-light. Move coding judgment to the executor.
 6. Assign every writable status, progress, context, or memory file to one role.
-7. Prefer direct paths over repeating large guidance in a parent instruction.
-8. Validate manually after every prompt edit.
+7. Use one role-local memory ledger for the planner and executor of that role. Other roles must not write it.
+8. Preserve the cadence block and change its default only when the user specifies another interval or operating window.
+9. Prefer direct paths over repeating large guidance in a parent instruction.
+10. Validate manually after every prompt edit.
 
 ## Manual reuse
 
